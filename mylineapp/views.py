@@ -179,3 +179,25 @@ def callback(request):
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
+
+#劍橋字典
+def dictionary():
+    url = "https://dictionary.cambridge.org/zht/"
+
+    user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36"
+    headers = {'User-Agent': user_agent}
+    html = requests.get(url, headers=headers)
+    html.encoding ='uft-8'
+
+    soup = BeautifulSoup(html.text, 'html.parser')
+    soup.encoding = 'utf-8'
+
+    nn = soup.find(id='jsMainList')
+    rts = ""
+    for i in nn.find_all('li')[:10]:
+        rts += i.find('div',class_='date').text + ' '
+        rts += i.find('h2').text+'\n'
+        rts += 'https://dictionary.cambridge.org/zht/' + i.find('a')['href']
+        rts += '\n\n'
+
+    return rts
